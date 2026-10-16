@@ -72,6 +72,44 @@
                 .edit-btn { color: #9CA3AF; cursor: pointer; font-weight: bold; padding: 5px 8px; border-radius: 4px; transition: all 0.2s; margin-right: 5px; }
         .edit-btn:hover { color: #2563EB; background-color: #dbeafe; }
 
+                /* Стили для кнопки "Наверх" */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 45px;
+            height: 45px;
+            background-color: var(--ic-dark);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border-bottom: 3px solid var(--ic-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+            z-index: 999;
+        }
+
+        /* Эффект при наведении */
+        .scroll-top-btn:hover {
+            background-color: #2e343f;
+            transform: translateY(-3px);
+        }
+
+        /* Класс, который будет добавляться через JS при прокрутке */
+        .scroll-top-btn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
     </style>
 </head>
 <body>
@@ -117,6 +155,10 @@
         </tbody>
     </table>
 </div>
+
+    <!-- Кнопка возврата наверх -->
+<button id="scrollTopBtn" class="scroll-top-btn" onclick="scrollToTop()">↑</button>
+
 
 <!-- Модальное окно ДОБАВЛЕНИЯ -->
 <div id="addModal" class="modal-overlay" onclick="closeModal(event)">
@@ -198,6 +240,8 @@
         createToastElement(); 
         changeLanguage(currentLang);
         loadData();
+        if (scrollTopBtn) scrollTopBtn.setAttribute('data-tooltip', currentLang === 'ru' ? 'Наверх' : 'Augšā');
+
     };
 
     function changeLanguage(lang) {
@@ -212,6 +256,11 @@
 
         const searchInput = document.getElementById('searchInput');
         if (searchInput) searchInput.placeholder = translations[lang].searchPlaceholder;
+
+                const topTip = lang === 'ru' ? 'Наверх' : 'Augšā';
+        const topBtn = document.getElementById('scrollTopBtn');
+        if (topBtn) topBtn.setAttribute('data-tooltip', topTip);
+
     }
 
     function setProgress(show) {
@@ -418,6 +467,28 @@
             searchInput.focus();
         }
     }
+
+        // Отслеживаем прокрутку страницы
+    window.onscroll = function() {
+        const topBtn = document.getElementById("scrollTopBtn");
+        if (!topBtn) return;
+        
+        // Если прокрутили больше 300 пикселей — показываем кнопку
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            topBtn.classList.add("show");
+        } else {
+            topBtn.classList.remove("show");
+        }
+    };
+
+    // Плавный возврат к началу страницы
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
 </script>
 
 
